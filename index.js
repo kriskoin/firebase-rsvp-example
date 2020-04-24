@@ -68,9 +68,11 @@ firebase.auth().onAuthStateChanged(
       if(user){
         startRsvpButton.textContent = "LOGOUT";
         guestbookContainer.style.display="block";
+        subscribeGuestbook()
       }else{
         startRsvpButton.textContent ="RSVP";
         guestbookContainer.style.display="none";
+        unsubscribGestbook()
       }
 });
 
@@ -92,11 +94,15 @@ input.value = "";
 return false;
 }); 
 
+function subscribeGuestbook(){
+
+
+
 /*
-TODO: 
-my code compare with teahers code
---
-firebase.firestore().collection("gestbook")
+//TODO: 
+//my code compare with teahers code
+
+gestbookListener = firebase.firestore().collection("gestbook")
 .orderBy("timestamp","desc")
 .onSnapshot((snaps)=>{
   guestbook.innerHTML="";
@@ -107,7 +113,8 @@ firebase.firestore().collection("gestbook")
   });
 });
 */
-firebase.firestore().collection("guestbook").orderBy("timestamp", "desc")
+
+guestbookListener = firebase.firestore().collection("guestbook").orderBy("timestamp", "desc")
 .onSnapshot((snaps) => {
 guestbook.innerHTML = "";
 snaps.forEach((doc)=>{
@@ -116,3 +123,12 @@ entry.textContent = doc.data().name + ": " + doc.data().text;
 guestbook.appendChild(entry);
 });
 });
+
+}
+
+function unsubscribGestbook(){
+  if(guestbookListener != null){
+    guestbookListener();
+    guestbookListener=null;
+  }
+}
