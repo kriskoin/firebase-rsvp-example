@@ -91,3 +91,28 @@ input.value = "";
 // Return false to avoid redirect
 return false;
 }); 
+
+/*
+TODO: 
+my code compare with teahers code
+--
+firebase.firestore().collection("gestbook")
+.orderBy("timestamp","desc")
+.onSnapshot((snaps)=>{
+  guestbook.innerHTML="";
+  spans.forEach((doc)=>{
+    const extry = document.createElement("p");
+    entry.textContent= doc.data().name+ ": "+doc.data().text;
+    guestbook.appendChild(entry);
+  });
+});
+*/
+firebase.firestore().collection("guestbook").orderBy("timestamp", "desc")
+.onSnapshot((snaps) => {
+guestbook.innerHTML = "";
+snaps.forEach((doc)=>{
+const entry = document.createElement("p");
+entry.textContent = doc.data().name + ": " + doc.data().text;
+guestbook.appendChild(entry);
+});
+});
