@@ -16,7 +16,7 @@ const guestbookContainer = document.getElementById('guestbook-container');
 const form = document.getElementById('leave-message');
 const input = document.getElementById('message');
 const guestbook = document.getElementById('guestbook');
-const numberAttending = document.getElementById('number-attending');
+const numberAfttending = document.getElementById('number-attending');
 const rsvpYes = document.getElementById('rsvp-yes');
 const rsvpNo = document.getElementById('rsvp-no');
 
@@ -116,7 +116,7 @@ function unsubscribGestbook(){
 }
 
 rsvpYes.onclick = () => {
-  const userDoc = firebase.firestore.collection("attendees").doc(firebase.auth().currentUser.uid);
+  const userDoc = firebase.firestore.collection('attendees').doc(firebase.auth().currentUser.uid);
 
   userDoc.set({
     attending: true
@@ -125,9 +125,13 @@ rsvpYes.onclick = () => {
 }
 
 rsvpNo.onClick=()=>{
-  const userDoc = firebase.firestore.collection("attendees").doc(firebase.auth().currentUser.uid);
+  const userDoc = firebase.firestore.collection('attendees').doc(firebase.auth().currentUser.uid);
   userDoc.set({
     attending: false
   }).catch(console.error);
 };
 
+firebase.firestore.collection('attendees').where("attending","==",true).onSnapshot((snap)=>{
+  const newAttendeeCount = snap.docs.length;
+  numberAfttending.innerHTML = newAttendeeCount + 'people going';
+});
