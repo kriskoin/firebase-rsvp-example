@@ -69,10 +69,12 @@ firebase.auth().onAuthStateChanged(
         startRsvpButton.textContent = "LOGOUT";
         guestbookContainer.style.display="block";
         subscribeGuestbook()
+        subscribeCurrentRSVP(user);
       }else{
         startRsvpButton.textContent ="RSVP";
         guestbookContainer.style.display="none";
         unsubscribGestbook()
+        unsubscribeCurrentRSVP();
       }
 });
 
@@ -116,7 +118,7 @@ function unsubscribGestbook(){
 }
 
 rsvpYes.onclick = () => {
-  const userDoc = firebase.firestore.collection('attendees').doc(firebase.auth().currentUser.uid);
+  const userDoc = firebase.firestore().collection('attendees').doc(firebase.auth().currentUser.uid);
 
   userDoc.set({
     attending: true
@@ -125,13 +127,38 @@ rsvpYes.onclick = () => {
 }
 
 rsvpNo.onClick=()=>{
-  const userDoc = firebase.firestore.collection('attendees').doc(firebase.auth().currentUser.uid);
+  const userDoc = firebase.firestore().collection('attendees').doc(firebase.auth().currentUser.uid);
   userDoc.set({
     attending: false
   }).catch(console.error);
 };
 
-firebase.firestore.collection('attendees').where("attending","==",true).onSnapshot((snap)=>{
+firebase.firestore().collection('attendees').where("attending","==",true).onSnapshot((snap)=>{
   const newAttendeeCount = snap.docs.length;
-  numberAfttending.innerHTML = newAttendeeCount + 'people going';
+  numberAfttending.innerHTML = newAttendeeCount + ' people going';
 });
+
+function subscribeCurrentRSVP(user){
+  rsvpListener = firebase.firestore().collection('attendees').doc(user.uid).onSnapshot((doc)=>{
+      if(doc && doc.data()){
+        const attendingRespopnse = doc.data().attending;
+      }
+      if (attendingRespopnse){
+        rsvpYes.className = "clicked";
+        rsvpNo.className = "";
+      }else{
+        rsvpYes.className = "";
+        rsvpNo.className = "clicked";
+      }
+  });
+}
+
+
+function unsubscribeCurrentRSVP(){
+  if (rsvpListener != null){
+      rsvpListener();
+      rsvpListener = null;
+  }
+  rsvpYes.className = "";
+  rsvpNo.className = "";
+}
