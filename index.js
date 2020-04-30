@@ -77,23 +77,6 @@ firebase.auth().onAuthStateChanged(
 });
 
 
-
-form.addEventListener("submit", (e) => {
-// Prevent the default form redirect
-e.preventDefault();
-// Write a new message to the database collection "guestbook"
-firebase.firestore().collection("guestbook").add({
-  text: input.value,
-  timestamp: Date.now(),
-  name: firebase.auth().currentUser.displayName,
-  userId: firebase.auth().currentUser.uid
-})
-// clear message input field
-input.value = ""; 
-// Return false to avoid redirect
-return false;
-}); 
-
 function subscribeGuestbook(){
   guestbookListener = firebase.firestore().collection("guestbook").orderBy("timestamp","desc")
   .onSnapshot((snaps)=>{
@@ -113,3 +96,19 @@ function unsubscribGestbook(){
     guestbookListener=null;
   }
 }
+
+form.addEventListener("submit", (e) => {
+  // Prevent the default form redirect
+  e.preventDefault();
+  // Write a new message to the database collection "guestbook"
+  firebase.firestore().collection("guestbook").add({
+    text: input.value,
+    timestamp: Date.now(),
+    name: firebase.auth().currentUser.displayName,
+    userId: firebase.auth().currentUser.uid
+  })
+  // clear message input field
+  input.value = ""; 
+  // Return false to avoid redirect
+  return false;
+}); 
