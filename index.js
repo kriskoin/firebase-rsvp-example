@@ -77,25 +77,6 @@ firebase.auth().onAuthStateChanged(
 });
 
 
-function subscribeGuestbook(){
-  guestbookListener = firebase.firestore().collection("guestbook").orderBy("timestamp","desc")
-  .onSnapshot((snaps)=>{
-    guestbook.innerHTML="";
-    snaps.forEach((doc)=>{
-      const entry = document.createElement("p");
-      entry.textContent= doc.data().name+ ": "+doc.data().text;
-      guestbook.appendChild(entry);
-    });
-  });
-
-}
-
-function unsubscribGestbook(){
-  if(guestbookListener != null){
-    guestbookListener();
-    guestbookListener=null;
-  }
-}
 
 form.addEventListener("submit", (e) => {
   // Prevent the default form redirect
@@ -112,3 +93,41 @@ form.addEventListener("submit", (e) => {
   // Return false to avoid redirect
   return false;
 }); 
+
+
+
+function subscribeGuestbook(){
+  guestbookListener = firebase.firestore().collection("guestbook").orderBy("timestamp","desc")
+  .onSnapshot((snaps)=>{
+    guestbook.innerHTML="";
+    snaps.forEach((doc)=>{
+      const entry = document.createElement("p");
+      entry.textContent= doc.data().name+ ": "+doc.data().text;
+      guestbook.appendChild(entry);
+    });
+  });
+}
+
+function unsubscribGestbook(){
+  if(guestbookListener != null){
+    guestbookListener();
+    guestbookListener=null;
+  }
+}
+
+rsvpYes.onclick = () => {
+  const userDoc = firebase.firestore.collection("attendees").doc(firebase.auth().currentUser.uid);
+
+  userDoc.set({
+    attending: true
+  }).catch(console.error);
+  
+}
+
+rsvpNo.onClick=()=>{
+  const userDoc = firebase.firestore.collection("attendees").doc(firebase.auth().currentUser.uid);
+  userDoc.set({
+    attending: false
+  }).catch(console.error);
+};
+
